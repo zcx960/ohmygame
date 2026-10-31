@@ -1,0 +1,92 @@
+name: Build desktop packages (unsigned)
+
+# Upstream's Release desktop workflow requires repository variables and Apple
+# signing secrets that a fork does not have: it validates CSC_LINK, APPLE_ID
+# and the R2 upload settings before building. This workflow builds installable
+# packages from any branch instead, without signing or publishing, and keeps
+# them as downloadable artifacts. Run it from Actions → Run workflow.
+#
+# The packages are unsigned, so macOS asks for confirmation on first launch
+# (right-click → Open) and Windows shows a SmartScreen warning.
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: build-fork-${{ github.ref }}
+  cancel-in-progress: false
+
+env:
+  # electron-builder reads the update feed from here. A fork publishes nothing,
+  # so it points at a reserved, non-resolving host and the app's update check
+  # simply fails instead of reaching OhMyGame's feed.
+  DESKTOP_UPDATE_URL: https://updates.invalid/ohmygame
+
+jobs:
+  macos:
+    runs-on: macos-14
+    env:
+      # No signing identity is available in a fork.
+      CSC_IDENTITY_AUTO_DISCOVERY: "false"
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22.19.0
+      - uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: 1.4.2
+      - run: bun install --frozen-lockfile
+      - run: bun run prepare:desktop-runtime darwin-arm64
+      # Builds the daemon, the renderer, preinstalled plugins and examples.
+      - run: bun run build:desktop-app
+      # The packaged app expects the examples folder to exist even when the
+      # examples repository could not be downloaded.
+      - run: mkdir -p .runtime/examples
+      - name: Build unsigned macOS package
+        run: >
+          bun --bun node_modules/electron-builder/cli.js
+          --mac dmg zip --arm64
+          --publish never
+          --config.mac.identity=null
+          --config.mac.notarize=false
+      - uses: actions/upload-artifact@v4
+        with:
+          name: OhMyGame-macOS-arm64-unsigned
+          retention-days: 7
+          if-no-files-found: error
+          path: |
+            release/*.dmg
+            release/*.zip
+
+  windows:
+    runs-on: windows-latest
+    env:
+      CSC_IDENTITY_AUTO_DISCOVERY: "false"
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22.19.0
+      - uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: 1.4.2
+      - run: bun install --frozen-lockfile
+      - run: bun run prepare:desktop-runtime win32-x64
+      - run: bun run build:desktop-app
+      - name: Ensure the examples folder exists
+        shell: pwsh
+        run: |
+          if (-not (Test-Path ".runtime/examples")) { New-Item -ItemType Directory -Path ".runtime/examples" | Out-Null }
+      - name: Build unsigned Windows package
+        run: bun --bun node_modules/electron-builder/cli.js --win nsis --x64 --publish never
+      - uses: actions/upload-artifact@v4
+        with:
+          name: OhMyGame-Windows-x64-unsigned
+          retention-days: 7
+          if-no-files-found: error
+          path: |
+            release/*.exe
