@@ -6,6 +6,7 @@ import baseten from "@lobehub/icons-static-svg/icons/baseten.svg";
 import cerebras from "@lobehub/icons-static-svg/icons/cerebras-color.svg";
 import cloudflare from "@lobehub/icons-static-svg/icons/cloudflare-color.svg";
 import codex from "@lobehub/icons-static-svg/icons/codex-color.svg";
+import codeBuddy from "@lobehub/icons-static-svg/icons/codebuddy-color.svg";
 import claudeCode from "@lobehub/icons-static-svg/icons/claudecode-color.svg";
 import deepSeek from "@lobehub/icons-static-svg/icons/deepseek-color.svg";
 import fireworks from "@lobehub/icons-static-svg/icons/fireworks-color.svg";
@@ -82,6 +83,7 @@ export const PROVIDER_ICONS: Readonly<Partial<Record<string, ProviderIcon>>> = {
   "claude-code-cli": color(claudeCode),
   "codex-cli": color(codex),
   "opencode-cli": monochrome(openCode),
+  "codebuddy-cli": color(codeBuddy),
   opencode: monochrome(openCode),
   "opencode-go": monochrome(openCode),
   openrouter: monochrome(openRouter),

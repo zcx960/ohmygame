@@ -1,7 +1,8 @@
 # Coding agents
 
 A conversation can run on a coding agent CLI that is already installed on the
-computer: Claude Code, Codex, or OpenCode 2.1.0 or newer in the 2.x series.
+computer: Claude Code, Codex, CodeBuddy Code, or OpenCode 2.1.0 or newer in
+the 2.x series.
 OpenCode v1 is no longer supported. The CLI runs the agent loop with its
 own sign-in and model. OhMyGame keeps the conversation, checkpoints and Undo,
 its canvas, media, game and plugin tools, and the approval decisions.
@@ -11,7 +12,7 @@ accepted tradeoffs, and validation limits.
 
 ## Using one
 
-First-run setup also offers Claude Code, Codex, and OpenCode in one
+First-run setup also offers Claude Code, Codex, CodeBuddy Code, and OpenCode in one
 horizontally scrolling row. Select an agent after installation and sign-in, choose its model
 on the same connection screen, then save with **Next** and continue to optional
 creative tools. Switching agents retains each selection until it is saved. OhMyGame

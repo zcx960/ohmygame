@@ -60,6 +60,14 @@ const RUNTIME_KEEP: Record<AgentRuntimeId, readonly string[]> = {
   "claude-code-cli": ["CLAUDE_CONFIG_DIR", "CLAUDE_CODE_OAUTH_TOKEN"],
   "codex-cli": ["CODEX_HOME"],
   "opencode-cli": ["OPENCODE_CONFIG_DIR", "OPENCODE_CONFIG"],
+  // Its own account settings: the folder that holds the person's sign-in and
+  // model list, and the token or key a managed install is started with.
+  "codebuddy-cli": [
+    "CODEBUDDY_CONFIG_DIR",
+    "CODEBUDDY_API_KEY",
+    "CODEBUDDY_AUTH_TOKEN",
+    "CODEBUDDY_BASE_URL",
+  ],
 };
 
 export function agentEnvironment(
